@@ -1,0 +1,20 @@
+name: Test sed command
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-sed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run sed command
+        env:
+          BRANCH_NAME_SANITIZED: randombranch
+        run: |
+          echo "https://dev.cheddarup.com/path/to/resource" > test-sed
+          echo "https://s3.us-west-1.amazonaws.com/static.dev.cheddarup.com/path/to/file.png" >> test-sed
+          echo "https://dev.cheddarup.com/api/endpoint" >> test-sed
+          echo "https://s3.eu-central-1.amazonaws.com/somebucket/path/to/anotherfile.png" >> test-sed
+          sed "/s3\..*\.amazonaws\.com/!s/dev.cheddarup.com/pr-${{ env.BRANCH_NAME_SANITIZED }}.dev.cheddarup.com/g" test-sed
+          cat test-sed
